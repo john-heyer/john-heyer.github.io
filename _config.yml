@@ -69,7 +69,7 @@ og_image: # The site-wide (default for all links) Open Graph preview image
 
 github_username: john-heyer # your GitHub user name
 gitlab_username: # your GitLab user name
-x_username: # your X handle
+x_username: hohnjeyer # your X handle
 mastodon_username: # your mastodon instance+username in the format instance.tld/@username
 linkedin_username: john-heyer-685264114 # your LinkedIn user name
 telegram_username: # your Telegram user name
@@ -120,9 +120,9 @@ bing_site_verification:  # out your bing-site-verification ID (Bing Webmaster)
 # Blog
 # -----------------------------------------------------------------------------
 
-blog_name: Writing Stuff # blog_name will be displayed in your blog page
+blog_name: p-value 💯 # blog_name will be displayed in your blog page
 blog_nav_title: blog  # your blog must have a title for it to be displayed in the nav bar
-blog_description: posts about ML (and maybe life at some point). Opinions are mine and subject to change :)
+blog_description: Posts about ML (and maybe life at some point). Opinions are mine and <a href="https://web.mit.edu/6.031/www/fa19/classes/29-ethics/#sfb_etu_and_rfc/">RFC</a>.
 permalink: /blog/:year/:title/
 
 # Pagination

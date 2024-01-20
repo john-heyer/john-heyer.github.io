@@ -8,7 +8,7 @@ related_posts: false
 toc:
   sidebar: left
 ---
-Forcing myself to write (usually tiny) summaries of things I'm reading, to improve retention. Not intended to teach --
+Forcing myself to write (usually tiny) summaries of things I'm reading to improve retention. Not intended to teach --
 will be terse and probably imprecise in places!
 
 
