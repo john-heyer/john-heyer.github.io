@@ -13,6 +13,7 @@ will be terse and probably imprecise in places!
 
 
 ## Instruction following
+Training models to follow instructions. Sometimes referred to as alignment, but that's an overloaded term imo, and I mean something more specific here. 
 
 #### [LIMA](https://arxiv.org/abs/2305.11206)
 
@@ -44,6 +45,7 @@ Fine-tuned LLaMA using “[self-instruct](https://arxiv.org/pdf/2212.10560.pdf)�
 
 
 ## RAG & Agents
+Getting models to respond using tools + data (potentially) not seen during training (i.e., non-parametrically). 
 
 #### [Toolformer](https://arxiv.org/abs/2302.04761)
 
@@ -92,6 +94,7 @@ Nice work, but glorified ReWOO that fails to give it enough credit. They extend 
 
 
 ## Parameter-efficient fine-tuning (PEFT)
+Fine-tuning models with fewer learned parameters!
 
 #### [LoRA](https://arxiv.org/abs/2106.09685)
 The authors fine-tune large models by freezing them and only training small adapters. They do so by decomposing a large matrix $$W'$$ into a sum of the (frozen) pretrained matrix $$W_0$$ and a low-rank perturbation $$\Delta W$$. Thus the forward pass to compute hidden state $$h$$ from input $$x$$, $$h = W_0x$$, is replaced with:
@@ -118,12 +121,12 @@ During training, they update as few as < 1% of the total parameters, which saves
 The authors fine-tune Llama models using LoRA adapters atop 4 and 8 bit quantized base LLMs without sacrificing performance. Additionally, they fine-tune their model using instruction/chat datasets like open assistant/flanv2 and demonstrate performance comparable to ChatGPT as judged by GPT-4, highlighting the importance of data quality over quantity. Impressively, this can be done using only a single A100 GPU.
 
 
-
 ## Understanding Transformer Mechanisms
+Understanding *how* transformers implement things (mechanistic interpretability) and other transformer-specific stuff.
 
 #### [a mathematical framework for transformers](https://transformer-circuits.pub/2021/framework/index.html)
 
-TODO: i love this paper. lot to add on this!
+TODO: I love this work. lot to add on this!
 
 #### [What learning alg is in-context learning?](https://arxiv.org/abs/2211.15661)
 
@@ -131,6 +134,7 @@ The authors demonstrate that via in context learning, transformers are capable o
 
 
 ## Safety
+Understanding + mitigating model biases, frameworks for evaluating models on hard tasks, red-teaming, the works.   
 
 #### [sycophancy](https://arxiv.org/abs/2310.13548)
 TODO: briefly describe. 
@@ -144,6 +148,7 @@ I think this work is exciting because it provides a way of quantifying _systemat
 :sandwich:
 
 ## RL + Human Preferences
+Learning from human preference data?!
 
 #### [RLHF (Instruct GPT)](https://arxiv.org/pdf/2203.02155.pdf)
 
@@ -214,13 +219,15 @@ r(x, y) = \beta \text{log} \frac{\pi_r (y | x)}{\pi_{ref} (y | x)} + \beta \text
 Interesting take suggesting the SFT teaches the model to hallucinate in cases in which the “fact” required to answer a question is not contained in the model’s internal representation. RL on the other hand, allows for “negative reinforcement” by teaching the model when it is wrong. He first introduces the “diversity argument” which is that SFT is too restrictive in that it prescribes an exact response and penalizes any deviations from it. As humans, we understand that there are likely several “equally good” ways to convey the same information, which is expressible via RL. This is the intuition that I have always had, but Yoav thinks that it is not convincing, because SFT works well in practice and RL is difficult to get right (why do either of these observations make the diversity intuition not convincing?).
 
 
-## Conversational LM
+## Evaluation
+How do we evaluate general-purpose models? It's hard... especially over multiple turns...
 
 #### [User Simulation with LLMs for Evaluating Task Oriented Dialogs](https://arxiv.org/pdf/2309.13233.pdf)
 
 Prompting LLMs > fine-tuning them for user simulation.
 
 ## Prompting
+How to get your model to do watchu want.
 
 #### [CoT prompting](https://arxiv.org/abs/2201.11903)
 
@@ -266,6 +273,7 @@ They propose a prompting strategy to decompose questions to improve multi-hop QA
 </div>
 
 ## Time-sensitive QA
+Answering questions requiring new information!
 
 #### [fresh-llm](https://arxiv.org/abs/2310.03214)
 
