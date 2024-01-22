@@ -5,8 +5,10 @@ date: 2023-12-15 10:14:00-0400
 description: tiny summaries/notes about things I'm reading (to help me remember them)
 tags: ml-reading
 related_posts: false
+
 toc:
-  sidebar: left
+  sidebar: top
+giscus_comments: true
 ---
 Forcing myself to write (usually tiny) summaries of things I'm reading to improve retention. Not intended to teach --
 will be terse and probably imprecise in places!
@@ -52,9 +54,9 @@ Getting models to respond using tools + data (potentially) not seen during train
 The authors detail a fully self-supervised method for teaching an LLM to (selectively) use tools, including calculators, search engines and calendars. They do so by fine-tuning a model on a modified pretraining corpus that includes API input/output results in plain text when relevant. They insert such API calls by (i) few-shot prompting an LLM with examples that demonstrate when an API call is useful(e.g., “One US dollar is approximately equal to 23 Czech crown, or `[API(1/23)→.043]` 4.3%.”), and (ii) filtering to only cases when the API input/output reduces the complexity of the subsequent tokens by at least some fixed amount (hyperparameter). Their model, Toolformer, is better than models which cannot utilize APIs on several tasks including math, question answering, and time-sensitive QA, and even exceeds performance of the much larger GPT3 on several tasks.
 
 
-#### [self-rag](https://arxiv.org/pdf/2310.11511.pdf)
+#### [Self-RAG](https://arxiv.org/pdf/2310.11511.pdf)
 
-Learning when to retrieve + critiquing retrieved results generatively
+Learning _when_ to retrieve + critiquing retrieved results generatively.
 
 
 #### [ReAct](https://arxiv.org/abs/2210.03629)
@@ -72,7 +74,7 @@ Removes the sequential (or "reactive" :wink:) planning of ReAct by decoupling th
 
 <div class="row mt-3">
     <div class="col-sm mt-3 mt-md-0">
-        {% include figure.html path="assets/img/sci-figs/rewoo.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+        {% include figure.html path="assets/img/sci-figs/rewoo.png" class="img-fluid rounded z-depth-1" zoomable=true style="z-index: 10000000000000000;" %}
     </div>
 </div>
 <div class="caption">
@@ -124,9 +126,39 @@ The authors fine-tune Llama models using LoRA adapters atop 4 and 8 bit quantize
 ## Understanding Transformer Mechanisms
 Understanding *how* transformers implement things (mechanistic interpretability) and other transformer-specific stuff.
 
-#### [a mathematical framework for transformers](https://transformer-circuits.pub/2021/framework/index.html)
+#### [A Mathematical Framework for Transformer Circuits](https://transformer-circuits.pub/2021/framework/index.html)
 
-TODO: I love this work. lot to add on this!
+Inspired by the [Distill ciruits thread](https://distill.pub/2020/circuits/), which defined & investigated "circuits", 
+or weights of a neural network that connect such that they implement some interpretable "function" like detecting curves 
+in images, the authors set out to study circuits in transformer models. They do so by first conceptualizing transformers 
+in a new -- but mathematically equivalent-- way, then finding circuits in "toy" models (0 to 2-layer transformers).
+
+<u><b>Conceptual Framework</b></u>
+
+**Residual Stream**:
+TODO
+"Attention heads can be understood as independent operations, each outputting a result which is added into the residual stream."
+
+**QK + OV Circuits**:
+TODO
+
+
+
+<u><b>Mechanisms</b></u>
+
+**Zero layer transformers**:
+"Zero layer transformers model bigram statistics."
+
+**One layer transformers**:
+"One layer attention-only transformers are an ensemble of bigram and “skip-trigram” (sequences of the form "A… B C") models."
+
+**Two layer transformers**:
+"Two layer attention-only transformers can implement much more complex algorithms using compositions of attention heads."
+
+**Induction Heads**
+"Two layer attention heads use qualitatively more sophisticated inference-time algorithms — in particular, a special type 
+of attention head we call an induction head — to perform in-context-learning, forming an important transition point that will be relevant for larger models."
+
 
 #### [What learning alg is in-context learning?](https://arxiv.org/abs/2211.15661)
 
@@ -136,14 +168,117 @@ The authors demonstrate that via in context learning, transformers are capable o
 ## Safety
 Understanding + mitigating model biases, frameworks for evaluating models on hard tasks, red-teaming, the works.   
 
-#### [sycophancy](https://arxiv.org/abs/2310.13548)
-TODO: briefly describe. 
+#### [Towards Understanding Sycophancy](https://arxiv.org/abs/2310.13548)
+Studies the prevalence of sycophancy, or flattery in order to gain the approval of a superior, in language models, 
+particularly those trained with human preferences. They find several patterns of sycophantic behavior such as:
+- admitting mistakes that don't exist when questioned by the user
+- demonstrating biases that align with the user.
+
+Really nice figs, so I'm including several directly from the paper:
+
+<div class="row mt-3 justify-content-center">
+    <div class="col-sm mt-3 mt-md-0 text-center">
+        {% include figure.html path="assets/img/sci-figs/syc1.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0 text-center">
+        {% include figure.html path="assets/img/sci-figs/syc2.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="row mt-3 justify-content-center">
+    <div class="col-sm mt-3 mt-md-0 text-center">
+        {% include figure.html path="assets/img/sci-figs/syc4.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+    <div class="col-sm mt-3 mt-md-0 text-center">
+        {% include figure.html path="assets/img/sci-figs/syc3.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+    [<b>Click to zoom</b>] Demonstrations of models i) providing biased feedback, ii) swaying opinions, iii) conforming to a user's preconception, and iv) mimicking users' mistakes from (<a href='https://arxiv.org/pdf/2310.13548.pdf'>Sharma et al.</a>)
+</div>
+
+
+They then prompt a model to generate features for a given `(user_input, preferred_response, dispreferred_response)` interaction, 
+and use these features as input to a Bayesian logistic regression model trained to predict which response was 
+preferred (by humans) from these features alone. They find that agreeing with the user is one of the most predictive features 
+of preference.
+
+
+The authors investigate whether preference models (PMs, trained to predict human preferences) encourage sycophancy. 
+They use the PM used to train Claude 2 to select the best response from N sampled generations. They also do the same with 
+a "Non-sycophantic PM", which simply prepends additional instructions to the PM to discourage sycophancy explicitly. 
+They find that "feedback sycophancy" correlates positively with PM score, but "answer" and "mimicry" sycophancy correlate 
+negatively. In all cases, the non-sycophantic PM prefers less sycophantic responses than the baseline PM. Additionally, 
+they measure how these sycophancy metrics change during RL training, and find that "feedback" and "mimicry" sycophancy 
+increase with training steps, but "answer" sycophancy remains flat. 
+
+<div class="row mt-3 justify-content-center">
+    <div class="col-sm mt-3 mt-md-0 text-center">
+        {% include figure.html path="assets/img/sci-figs/syc5.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+    Preference Models might encourage sycophancy! From (<a href='https://arxiv.org/pdf/2310.13548.pdf'>Sharma et al.</a>)
+</div>
+
+They conclude with a study abot how often humans/PMs prefer sycophantic responses to truthful ones (that might correct 
+a user's misconception), and find that both humans and PMs prefer sycophantic responses to truthful ones at times. They 
+cleverly construct a dataset of questions around common misconceptions from TruthfulQA (e.g., "Georgia produces the most 
+peaches in the U.S."), and prompting a model to produce 1) sycophantic responses that agree with the user and 2) truthful 
+responses that correct the user.
+
+<div class="row mt-3 justify-content-center">
+    <div class="col-sm mt-3 mt-md-0 text-center">
+        {% include figure.html path="assets/img/sci-figs/syc6.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+    Humans and PMs alike sometimes prefer sycophancy. From (<a href='https://arxiv.org/pdf/2310.13548.pdf'>Sharma et al.</a>)
+</div>
+
+
+I realize this is way more than a _tiny_ summary, but because this work is really extensive and empirical, it doesn't 
+have a _single_, easily-summarized core idea/method. Perhaps this deserves its own post :)
 
 **Why I like this work**
 
-I think this work is exciting because it provides a way of quantifying _systematic_ failures of LLMs. There are many papers recently that make claims about what LLMs allegedly _can't_ do (e.g., reasoning), but too often the goal often seems to be to criticize existing methods or claims without offering solutions. This work instead seeks to identify situations in which LLMs stray from the truth, but suggests that there are ways to mitigate this issue! Further, sycophancy in models is intuitive and perhaps not surprising, but measuring it is quite complicated; this paper proposes creative ways of designing experiments to analyze a specific behavior. I am hopeful that additional work in identifying, and root causing, other systematic failures might lead to measurable improvements toward reliable and truthful assistants. My hunch is that preference models optimize for "style" which is often at odds with truth, suggesting that we need to find ways to model for this outside of simply scaling data and compute.
+I think this work is exciting because it provides a way of quantifying _systematic_ failures of LLMs. There are many 
+papers recently that make claims about what LLMs allegedly _can't_ do (e.g., reasoning), but too often the goal often 
+seems to be to criticize existing methods or claims without offering solutions. This work instead seeks to identify 
+situations in which LLMs stray from the truth, but suggests that there are ways to mitigate this issue! Further, 
+sycophancy in models is intuitive and perhaps not surprising, but measuring it is quite complicated; this paper proposes 
+creative ways of designing experiments to analyze a specific behavior. I'm hopeful that additional work in identifying,
+and root causing, other systematic failures might lead to measurable improvements toward reliable and truthful assistants. 
+My hunch is that preference models optimize for "style" which is often at odds with _truth_, suggesting that we need to 
+find ways to model for this outside of simply scaling data and compute.
 
-#### [scalable oversight](https://arxiv.org/abs/2211.03540)
+**Meta Sycophancy (to bit, or not to bit)**
+
+I originally found this work because Ethan Perez, one of the leads, [tweeted about it](https://x.com/EthanJPerez/status/1717288496279519273?s=20). 
+I really like empircal studies like this one, because they're packed with lots of experiments/findings/insights, as opposed 
+to works with a single-but-clear contribution. Obviously, those works are just as, if not more, "important", but empirical 
+work like this feels rare to me. Perhaps this is because it requires a sort of privilege to be able to conduct such a study
+(⏳ + 💰), but I think there's more to it than that -- to endeavor to do work that doesn't ~directly push the SOTA~ takes courage.
+
+Anyway, I found out about and ultimately applied to Ethan's [MATS Stream](https://www.matsprogram.org/language) because 
+of this. There was a question in the application form asking you to describe a recent work you liked and why you found 
+it exciting. Given my path to finding out about the program, a response detailing my interest in Ethan's work on sycophancy 
+would be genuine, of course, but surely would reek of sycophancy without such context! However, I was super amused by the 
+idea of asking Claude to describe the work and tell me why it was exciting, and couldn't help myself:
+
+<div class="row mt-3 justify-content-center">
+    <div class="col-sm mt-3 mt-md-0 text-center">
+        {% include figure.html path="assets/img/sci-figs/meta-syc.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+    ~Meta Sycophancy~
+</div>
+
+I was not accepted into the program, so perhaps Ethan did not find it as amusing as I did, but I'd rather live life thinking 
+otherwise and assume he got at least a chuckle out of it. The application process was a nice experience for me either way, 
+because it forced me to engage deeply with this work.
+
+#### [Scalable Oversight](https://arxiv.org/abs/2211.03540)
 
 :sandwich:
 
