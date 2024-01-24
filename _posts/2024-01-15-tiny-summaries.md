@@ -202,7 +202,7 @@ the billions of entries in these matrices and finding outstanding entries.
 **Two layer transformers**:
 "Two layer attention-only transformers can implement much more complex algorithms using compositions of attention heads."
 
-**Induction Heads**
+**Induction Heads**:
 Two-layer models ostensibly learn "induction heads" which allow us to model patterns of the form:  `[a][b] … [a] → [b]`. This can be 
 thought of as the simplest form of in-context learning, where a model learns a pattern observed previously in the sequence.
 In fact, this generalizes even for random sequences, indicating that these patterns weren't simply memorized during training. 
@@ -211,7 +211,7 @@ token in the sequence, and another head in the next later searches for "similar"
 next (`b`), because the residual stream corresponding to this token contained information indicating that `a` was its previous token!
 
 
-** Final Note**
+**Final Note**
 
 This paper is _super_ long, but there's loads of great stuff in here that I can't do justice in a summary, so again this work 
 warrants its own post. The work took me tons of time to read, and then some more time to read again... but I'd really recommend 
