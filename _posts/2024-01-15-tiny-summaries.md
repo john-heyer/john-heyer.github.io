@@ -135,14 +135,61 @@ in a new -- but mathematically equivalent-- way, then finding circuits in "toy" 
 
 <u><b>Conceptual Framework</b></u>
 
-**Residual Stream**:
-TODO
-"Attention heads can be understood as independent operations, each outputting a result which is added into the residual stream."
+**Residual Stream**: 
+This work uses the "residual stream" to refer to the contextualized embeddings (or hidden states) produced by the transformer. 
+They use this term for a single-token embedding and sequences of tokens alike, and throughout all layers of the model, akin to 
+a "state" vector that changes at each layer. They prefer this term because it emphasizes the residual nature, i.e., that each layer's 
+output is the sum of its input and some transformation of that input (e.g., $$ t_{i+1} = t_{i} + f(t_i) $$). They like to think of 
+attention heads functionally "reading" from and "writing" information to the residual stream.
 
-**QK + OV Circuits**:
-TODO
+**Independent + Additive Attention Heads**:
+The original Transformers paper ([Vaswani et al.](https://proceedings.neurips.cc/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf)) 
+parameterizes an attention "head" by three matrices: $$W_Q$$, $$W_K$$, $$W_O$$, which represent the "query", "key", and 
+"value" weights, respectively. The query and key matrices are used to compute the attention pattern, and the "result", 
+$$r^{h_1}$$ for head 1, is the attention-weighted sum of the value vectors. The $$n$$ result vectors (1 per head) are _concatenated_
+($$[r^{h_1}, ..., r^{h_n}]$$), before being multiplied by a final "output" matrix $$W_O$$. Instead, we can split the output 
+matrix into $$n$$ "blocks", each of size $$d_{\text{model}} \times d_{\text{model}} / n$$, and express this as a sum of 
+products with each block:
 
+\begin{align}
+\label{framework}
+\begin{bmatrix}
+r^{h_1} \cr
+\vdots \cr
+r^{h_n}
+\end{bmatrix} = [W_O^{h_1}, ..., W_O^{h_n}] \cdot
+\begin{bmatrix}
+r^{h_1} \cr
+\vdots \cr
+r^{h_n}
+\end{bmatrix} = \sum_i^n{W_O^{h_i} r^{h_i}},
+\end{align}
 
+which makes it clear that each attention head _independently_ contributes to the information added to (or removed from) the 
+residual stream. Additionally, we can (conceptually) parameterize each attention "head" with its own "output" weights $$W_O^{h_n}$$.  
+
+**$$W_{QK}$$ & $$W_{OV}$$ Matrices**: The authors find it useful to decompose attention heads into two independent operations: i) producing attention 
+patterns, and ii) determining what information to read from source tokens and how to write it to destination tokens. Traditionally, 
+we compute attention patterns by computing "query" and "key" values separately, then computing their inner-products, but this is 
+equivalent to multiplying by the low-rank $$W_{QK}$$ matrix. Similarly, the "output" and "value" matrices always operate together, 
+and given an attention pattern, we can compute the head's output by multiplying with the low-rank $$W_{OV}$$ matrix.
+
+**QK & OV Circuits**: When studying 1-layer transformer models, we can compute what they've called the "QK" or "OV" 
+_circuits_ (or matrices). This is best explained via image :):
+
+<div class="row mt-3 justify-content-center">
+    <div class="col-sm mt-3 mt-md-0 text-center">
+        {% include figure.html path="assets/img/sci-figs/mech-qk.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+    QK and OV circuits from (<a href='https://transformer-circuits.pub/2021/framework/index.html#summary-of-results'>Elhage et al.</a>).
+</div>
+
+These 4-matrix products (circuits) each produce $$d_{vocab} \times d_{vocab}$$ dimensional matrices, which can be interpreted! The "QK" 
+circuit describes how much a query token "wants" to attend to another key token, while the "OV" circuit describes how much a given token
+(if attended to) will change the logits corresponding to another output token. The authors analyze these circuits by literally reading 
+the billions of entries in these matrices and finding outstanding entries.
 
 <u><b>Mechanisms</b></u>
 
@@ -156,8 +203,19 @@ TODO
 "Two layer attention-only transformers can implement much more complex algorithms using compositions of attention heads."
 
 **Induction Heads**
-"Two layer attention heads use qualitatively more sophisticated inference-time algorithms — in particular, a special type 
-of attention head we call an induction head — to perform in-context-learning, forming an important transition point that will be relevant for larger models."
+Two-layer models ostensibly learn "induction heads" which allow us to model patterns of the form:  `[a][b] … [a] → [b]`. This can be 
+thought of as the simplest form of in-context learning, where a model learns a pattern observed previously in the sequence.
+In fact, this generalizes even for random sequences, indicating that these patterns weren't simply memorized during training. 
+Modeling this requires "composition" of attention heads, where one head in the first layer copies information from the previous 
+token in the sequence, and another head in the next later searches for "similar" queries and finds the token which it should predict
+next (`b`), because the residual stream corresponding to this token contained information indicating that `a` was its previous token!
+
+
+** Final Note**
+
+This paper is _super_ long, but there's loads of great stuff in here that I can't do justice in a summary, so again this work 
+warrants its own post. The work took me tons of time to read, and then some more time to read again... but I'd really recommend 
+it to anyone looking to understand transformers deeply, which often requires a new perspective.  
 
 
 #### [What learning alg is in-context learning?](https://arxiv.org/abs/2211.15661)

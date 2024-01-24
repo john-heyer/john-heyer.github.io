@@ -5,5 +5,5 @@ inline: true
 related_posts: false
 ---
 
-Our work "Soft Query Expansion: Learned Representations of Queries Expanded by LLMs", was [accepted at ECIR](https://www.ecir2024.org/accepted-paper/)!
+Our work, "Soft Query Expansion: Learned Representations of Queries Expanded by LLMs", was [accepted at ECIR](https://www.ecir2024.org/accepted-paper/)!
 (More details after publication)
