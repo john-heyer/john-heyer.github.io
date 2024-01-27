@@ -11,7 +11,7 @@ toc:
 giscus_comments: true
 ---
 Forcing myself to write (usually tiny) summaries of things I'm reading to improve retention. Not intended to teach --
-will be terse and probably imprecise in places!
+will be simultaneously terse and verbose and probably imprecise in places!
 
 
 ## Instruction following
@@ -336,9 +336,121 @@ I was not accepted into the program, so perhaps Ethan did not find it as amusing
 otherwise and assume he got at least a chuckle out of it. The application process was a nice experience for me either way, 
 because it forced me to engage deeply with this work.
 
-#### [Scalable Oversight](https://arxiv.org/abs/2211.03540)
+#### [Measuring Progress on Scalable Oversight](https://arxiv.org/abs/2211.03540)
 
-:sandwich:
+I haven't delved into the scalable oversight literature at all -- so my takes here are very "raw". I think in this case it was a 
+useful thought exercise to try explore this work without pre-exposure and try to come to my own conclusions
+(or really just more questions). Given that this is the first empirical study on oversight, many less-than-ideal decisions are 
+made, allowing for substantial room for improvement, but also an opportunity to wrestle with yourself trying to understand 
+if there are any confounding variables. Further, I found it hard to extrapolate from the findings of this work into the 
+realm of significantly increased model capabilities that exceed expert humans. As a mere human, I would love to hear the 
+opinions of experts.
+
+**What is scalable oversight?**
+
+_Oversight_ here refers to the ways in which we supervise models -- either through labels, feedback, rewards, etc. So what does 
+it mean to oversee in a scalable way? Scalable along what axis? In this context, _scalable_ qualifies oversight that 
+extends to increasingly difficult _tasks_. It's quite unclear how to supervise a model that exceeds human performance, and it's 
+equally unclear how to evaluate models in this setting if they don't yet exist. This work proposes ways to simulate this setting 
+with existing models, and evaluate the extent to which we can oversee models that exceed our performance. If our oversight 
+techniques succeed in a somewhat contrived setting, then perhaps we can be more confident that they can generalize to 
+harder tasks.  
+
+**🤖:sandwich:**
+
+In the "sandwich" setting, a task is chosen on which models _exceed_ typical human performance, but perform 
+worse than experts (👨‍🔧 < 🤖 <  👩🏽‍🔬). Non-expert humans must oversee models to increase their performance on this task, but 
+they cannot collaborate with experts; experts are only used to evaluate final model performance.
+
+**Wut da _hell_ is alignment?**
+
+The authors define alignment by contrasting it with capability. They say a language-model-based system is _capable_ if it 
+can be made to perform a task with small interventions such as in-context learning or fine-tuning. The goal of alignment 
+is to produce a model that can perform a task _without_ such interventions. When they say a model is _misaligned_, it implies 
+that it is capable. **Q**: Do prompt engineering strategies like "system" prompts or CoT count as interventions? If the model 
+performs well with these _cleverly designed_ but still zero-shot instructions, is it aligned? 
+
+This is closer to the "instruction following" variant of alignment, where the goal is to point a capable model in the "right" 
+direction, where right means objectively correct in this case, rather than aligned with the "values" of humans (or some subset of them). 
+Importantly, we can measure alignment in this setting using input and output only, rather than requiring some transparent model of 
+the decision making-process. For truly super-intelligent models, we'd no longer have the means to evaluate in this way. What are some 
+useful hypothetical tasks that models could conceivably solve that humans cannot (genuinely curious; not a hypothetical)? 
+Looking at super-intelligent systems today, like chess-bots and other systems requiring deep-seach, we have the means to 
+evaluate a bot's skill, because we can observe the result of a game against an opponent. Alternatively, if a language model were 
+to solve one of the famous "million dollar proofs" eluding mathematicians, it would have to do so via first principles, thus 
+would be verifiable. If a model were to discover a cancer-curing drug, we could conduct tests to verify its efficacy. Presumably, 
+solving these tasks requires clever methods of search + verify, but the problem is, we don't have ways to supervise this process 
+because we can't solve any of these tasks ourselves despite the fact that we can evaluate them. What are examples of tasks that 
+we might not even be able to evaluate?
+
+**Experimental Setup**
+
+The authors compare models, humans, and model-human teams on two tasks: MMLU (hard multiple choice questions from various topics)
+and QuALITY (timed, long passage QA). In their experiments, they remove the constraint that experts are only used to evaluate _at the end_, but instead involve experts 
+after each _inner_ iteration, or attempt at aligning a model. "Experts" here are not used directly, because they only study 
+multiple choice tasks, with discrete labels (presumably produced by experts at some point, however). They also do not allow 
+for fine-tuning models, and only explore strategies in which humans can interact with the model through chat. Thus, the 
+oversight methods explored (and the methods cited under "Potential Techniques"), require that the model is already "aligned" 
+on tasks that we _can_ oversee, such as dialog. Specifically, their base model has been trained to perform "chat", which requires 
+following instructions and maintaining context over multiple turns. Where do we draw the line for "misaligned" models, and 
+how do assumptions about already-aligned capabilities muddy conclusions? In theory, training a dialog assistant with RLHF entails
+aligning a model to perform a superset of the tasks studied here (though, these tasks might be in the tail in terms of difficulty).
+
+
+**Results**
+
+👨‍🔧 < 🤖 < (👨‍🔧 + 🤖) < 👩🏽‍🔬: humans and models are complementary 
+
+<div class="row mt-3">
+    <div class="col-sm mt-3 mt-md-0">
+        {% include figure.html path="assets/img/sci-figs/oversight.png" class="img-fluid rounded z-depth-1" zoomable=true %}
+    </div>
+</div>
+<div class="caption">
+    Results from (<a href='https://arxiv.org/pdf/2211.03540.pdf'>Measuring Scalable Oversight.</a>).
+</div>
+
+**Conclusions, Questions, Implications**
+
+The authors provide _empirical_ evidence through cleverly-designed experiments that model/human teams can outperform either 
+component in isolation. They are clear in the limitations of their experiments, such as their relaxations of the sandwich 
+setting. Additionally, they state plainly that the techniques revealed in their study are far from good enough to safely 
+oversee extremely-capable models. They hope that their study will lay the ground work for future empirical studies of other 
+oversight techniques.
+
+I'm somewhat conflicted about the experiments on QuALITY -- humans perform poorly due
+to an imposed time constraint, which obviously does not impact models. This is different from the inability to recall/compose knowledge
+(or lack thereof) suffered by _both_ humans and models to varied extent on MMLU. Humans _are already experts_ (best
+untimed human performance is between 86-94%, exceeding the best model + human performance here) -- they can effectively "oversee"
+models just by taking their time :smile:.
+
+Instead of including a human-in-the-loop to "perform task more accurately" -- as in MMLU -- it's "help me perform this task quickly,
+without sacrificing too much accuracy". Compared to humans, even the largest of models are already _good_ at fast. This task
+might only be a proper sandwich under a relatively small window of time constraints. I don't mean to argue that these techniques are not
+useful -- doing tasks quickly has its merits -- but how might you transfer these demonstrations to produce an aligned model (i.e., one
+that performs better on the task _without_ further intervention)? Let's assume that we have a way to effectively transfer
+this "policy" learned in the sandwich setting to models (i.e., _align_) such that their capability will match that of
+the human + model team _without_ the human (e.g., we can collect enough demonstrations using our efficacious human/model
+policy until we can induce this behaviour). Surely, you'd choose the oversight strategy of taking your time reading the
+passage to maximize accuracy, over the best strategy learned under some time constraint (though, the latter strategy is much more
+"scalable" w.r.t. time-of-manual-labor), because the time-constraint poses no threat to the aligned model at test time.
+
+Now, let's revisit the assumption that we can align model from these methods of oversight -- how might we actually use these 
+strategies to improve models? Let's ignore the fact that humans were presented with expert answers during the "inner loop", 
+and assume this was a "true sandwich". We've discovered an effective protocol by interacting with models through chat, and have 
+learned through experts that our protocol is sufficiently accurate (about expert performance). We can now employ whatever supervised 
+fine-tuning strategies we have at our disposal, because we effectively have expert-labeled data. The assumption that our 
+_protocol_ will scale to even harder tasks, is too strong. I don't think that's 
+implied here, but it could certainly be interpreted that way. It's important to note that the humans -- who are the least capable
+at performing the task at hand -- discovered ways in which they could _improve upon_ a model's performance _without_ verifying that 
+their strategy was any good (this is not actually true, because they told participants if they were correct/incorrect, but 
+they found that this did not result in progressively better performance, so let's ignore that). This means that the humans 
+were able to leverage strengths of these models (e.g., factual recall) to complement their own reasoning in such a way 
+that they were _convinced_ that their protocol was good (in some sense, they became "confident" in their answers). 
+I think the implication here is still important -- if humans can find _some_ protocol using models to improve their performance 
+on a task, then perhaps we can partner with models on even harder tasks as they become increasingly capable. Neither us, 
+nor the model alone can solve the math proof, but perhaps together we can push the frontier ever-closer. 
+But maybe I'm still missing the point?
 
 ## RL + Human Preferences
 Learning from human preference data?!
