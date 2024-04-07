@@ -122,7 +122,10 @@ bing_site_verification:  # out your bing-site-verification ID (Bing Webmaster)
 
 blog_name: p-value 💯 # blog_name will be displayed in your blog page
 blog_nav_title: blog  # your blog must have a title for it to be displayed in the nav bar
-blog_description: Posts about ML (and maybe life at some point). Opinions are mine and <a href="https://web.mit.edu/6.031/www/fa19/classes/29-ethics/#sfb_etu_and_rfc/">RFC</a>.
+blog_description: |+
+  Trying to decrease my $\frac{\text{things-consumed}}{\text{things-produced}}$ ratio from $\infty$ to some finite-but-probably-still-really-high number.
+  Opinions are mine and <a href="https://web.mit.edu/6.031/www/fa19/classes/29-ethics/#sfb_etu_and_rfc/">RFC</a>.
+
 permalink: /blog/:year/:title/
 
 # Pagination
