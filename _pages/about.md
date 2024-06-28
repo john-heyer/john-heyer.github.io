@@ -21,4 +21,4 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true  # includes social icons at the bottom of the page
 ---
 
-Hi! I'm currently a Machine Learning Research Engineer at Scale AI, building "models as a service" for enterprise customers interesting in GenAI applications. Recently, I was an Applied Scientist at Amazon (scientist by title, engineer at heart <3) for 3 years, where I worked on question answering for Alexa (now the ~AGI~ organization). I'm interested in agents, information retrieval, safety, evaluation -- all the things. I've trained the occasional language model of the large variety.
+Hi! I'm currently a Machine Learning Research Engineer at Scale AI, building "models as a service" for enterprise customers interested in GenAI applications. Recently, I was an Applied Scientist at Amazon (scientist by title, engineer at heart <3) for 3 years, where I worked on question answering for Alexa (now the ~AGI~ organization). I'm interested in agents, information retrieval, safety, evaluation -- all the things. I've trained the occasional language model of the large variety.
