@@ -339,7 +339,7 @@ because it forced me to engage deeply with this work.
 #### [Measuring Progress on Scalable Oversight](https://arxiv.org/abs/2211.03540)
 
 I haven't delved into the scalable oversight literature at all -- so my takes here are very "raw". I think in this case it was a 
-useful thought exercise to try explore this work without pre-exposure and try to come to my own conclusions
+useful thought exercise to try to explore this work without pre-exposure and try to come to my own conclusions
 (or really just more questions). Given that this is the first empirical study on oversight, many less-than-ideal decisions are 
 made, allowing for substantial room for improvement, but also an opportunity to wrestle with yourself trying to understand 
 if there are any confounding variables. Further, I found it hard to extrapolate from the findings of this work into the 
@@ -351,10 +351,9 @@ opinions of experts.
 _Oversight_ here refers to the ways in which we supervise models -- either through labels, feedback, rewards, etc. So what does 
 it mean to oversee in a scalable way? Scalable along what axis? In this context, _scalable_ qualifies oversight that 
 extends to increasingly difficult _tasks_. It's quite unclear how to supervise a model that exceeds human performance, and it's 
-equally unclear how to evaluate models in this setting if they don't yet exist. This work proposes ways to simulate this setting 
+equally unclear how to research such models, as they don't yet exist. This work proposes ways to simulate this setting 
 with existing models, and evaluate the extent to which we can oversee models that exceed our performance. If our oversight 
-techniques succeed in a somewhat contrived setting, then perhaps we can be more confident that they can generalize to 
-harder tasks.  
+techniques succeed in a somewhat contrived setting, this increases our confidence that they might work in the super-intelligent-wild.   
 
 **🤖:sandwich:**
 
@@ -366,7 +365,7 @@ they cannot collaborate with experts; experts are only used to evaluate final mo
 
 The authors define alignment by contrasting it with capability. They say a language-model-based system is _capable_ if it 
 can be made to perform a task with small interventions such as in-context learning or fine-tuning. The goal of alignment 
-is to produce a model that can perform a task _without_ such interventions. When they say a model is _misaligned_, it implies 
+is to produce a model that can perform a task _without_ such interventions _at test time_. When they say a model is _misaligned_, it implies 
 that it is capable. **Q**: Do prompt engineering strategies like "system" prompts or CoT count as interventions? If the model 
 performs well with these _cleverly designed_ but still zero-shot instructions, is it aligned? 
 
@@ -425,7 +424,8 @@ untimed human performance is between 86-94%, exceeding the best model + human pe
 models just by taking their time :smile:.
 
 Instead of including a human-in-the-loop to "perform task more accurately" -- as in MMLU -- it's "help me perform this task quickly,
-without sacrificing too much accuracy". Compared to humans, even the largest of models are already _good_ at fast. This task
+without sacrificing too much accuracy". Compared to humans, even the largest of models are already 
+_good at fast_. This task
 might only be a proper sandwich under a relatively small window of time constraints. I don't mean to argue that these techniques are not
 useful -- doing tasks quickly has its merits -- but how might you transfer these demonstrations to produce an aligned model (i.e., one
 that performs better on the task _without_ further intervention)? Let's assume that we have a way to effectively transfer
@@ -435,10 +435,10 @@ policy until we can induce this behaviour). Surely, you'd choose the oversight s
 passage to maximize accuracy, over the best strategy learned under some time constraint (though, the latter strategy is much more
 "scalable" w.r.t. time-of-manual-labor), because the time-constraint poses no threat to the aligned model at test time.
 
-Now, let's revisit the assumption that we can align model from these methods of oversight -- how might we actually use these 
+Now, let's revisit the assumption that we can align a model from these methods of oversight -- how might we actually use these 
 strategies to improve models? Let's ignore the fact that humans were presented with expert answers during the "inner loop", 
 and assume this was a "true sandwich". We've discovered an effective protocol by interacting with models through chat, and have 
-learned through experts that our protocol is sufficiently accurate (about expert performance). We can now employ whatever supervised 
+learned through experts that our protocol is sufficiently accurate (~about expert performance). We can now employ whatever supervised 
 fine-tuning strategies we have at our disposal, because we effectively have expert-labeled data. The assumption that our 
 _protocol_ will scale to even harder tasks, is too strong. I don't think that's 
 implied here, but it could certainly be interpreted that way. It's important to note that the humans -- who are the least capable
